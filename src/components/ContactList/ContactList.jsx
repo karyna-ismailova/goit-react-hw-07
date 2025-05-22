@@ -1,12 +1,24 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addContact } from "../../redux/contactsSlice";
+
 import Contact from "../Contact/Contact";
 import s from "./ContactList.module.css";
 import { changeFilter } from "../../redux/filtersSlice";
+import Loader from "../Loader/Loader";
+import {
+  selectContacts,
+  selectError,
+  selectFilteredContacts,
+  selectFilters,
+  selectLoading,
+} from "../../redux/selectors";
 
 const ContactList = () => {
-  const contacts = useSelector((state) => state.contacts.contacts);
-  const filter = useSelector((state) => state.filter.filter);
+  const contacts = useSelector(selectContacts);
+
+  const filter = useSelector(selectFilters);
+  const filteredContact = useSelector(selectFilteredContacts);
+  const error = useSelector(selectError);
+  const loading = useSelector(selectLoading);
 
   const dispatch = useDispatch();
 
@@ -21,7 +33,7 @@ const ContactList = () => {
   return (
     <div>
       <ul className={s.wrapper}>
-        {filteredData.map((contact) => (
+        {filteredContact.map((contact) => (
           <li className={s.listItem} key={contact.id}>
             <Contact
               id={contact.id}
@@ -31,6 +43,8 @@ const ContactList = () => {
           </li>
         ))}
       </ul>
+      {loading && <Loader isLoading={loading} />}
+      {error && <h2>Server is dead...</h2>}
     </div>
   );
 };
